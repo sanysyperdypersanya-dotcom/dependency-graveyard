@@ -6,14 +6,6 @@
 
 Потрібен Node.js 20.19+ або 22.12+.
 
-## Вхід до аналізатора
-
-Панель аналізу відкривається через меню «Функції сайту». Перед входом можна продовжити як гість або увійти через Google, GitHub чи GitLab. Гостьовий аналіз працює локально у браузері; файли не завантажуються на сервер.
-
-Для соціального входу скопіюйте `.env.example` у `.env.local` і вкажіть `VITE_SUPABASE_PUBLISHABLE_KEY` зі свого Supabase-проєкту. Для старого ключа `anon` підтримується змінна `VITE_SUPABASE_ANON_KEY`. `VITE_SUPABASE_URL` можна змінити, якщо використовуєте інший проєкт. Додайте змінні до build environment у Vercel. У клієнтському застосунку використовуйте лише публічний publishable/anon key; ніколи не додавайте secret/`service_role` key до клієнтського застосунку чи репозиторію.
-
-У Supabase Auth увімкніть Google, GitHub і GitLab та додайте OAuth client ID/secret кожного провайдера в Supabase Dashboard. Як callback URI в налаштуваннях OAuth-застосунків провайдерів використовуйте `https://lrvbqgtbnevoyyprcxij.supabase.co/auth/v1/callback`. У Supabase URL Configuration додайте `https://dependency-graveyard.vercel.app/?view=app` і `http://localhost:5173/?view=app` до дозволених redirect URLs. Після OAuth користувач повертається на `/?view=app`.
-
 
 ## Поточні можливості
 
