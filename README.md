@@ -1,22 +1,11 @@
 # Dependency Graveyard
 
-Темний дашборд для огляду застарілих залежностей і можливих альтернатив. Інтерфейс зроблено на HTML, CSS та TypeScript.
+Дашборд для огляду застарілих залежностей і можливих альтернатив.
 
 ## Запуск
 
 Потрібен Node.js 20.19+ або 22.12+.
 
-```sh
-# PowerShell (Windows)
-npm.cmd install
-npm.cmd run dev
-
-# Command Prompt, macOS, or Linux
-npm install
-npm run dev
-```
-
-У PowerShell використовуйте `npm.cmd`: політика виконання може блокувати однойменний скрипт `npm.ps1`.
 
 ## Поточні можливості
 
