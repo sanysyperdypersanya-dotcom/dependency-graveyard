@@ -109,7 +109,12 @@ function showAnalyzer(): void {
   document.querySelector<HTMLElement>(".profile .avatar")!.textContent = avatar;
   document.querySelector<HTMLElement>(".profile b")!.textContent = userName;
   document.querySelector<HTMLElement>(".profile small")!.textContent = authSession ? (authSession.user.email ?? "Обліковий запис") : "Гість · натисніть, щоб вийти";
-  document.querySelector<HTMLButtonElement>("#profile-button")!.setAttribute("aria-label", authSession ? "Вийти з облікового запису" : "Завершити гостьовий сеанс");
+  document.querySelector<HTMLButtonElement>("#profile-button")!.setAttribute("aria-label", "Відкрити меню користувача");
+  document.querySelector<HTMLElement>("#profile-menu-avatar")!.textContent = avatar;
+  document.querySelector<HTMLElement>("#profile-menu-name")!.textContent = userName;
+  document.querySelector<HTMLElement>("#profile-menu-email")!.textContent = authSession?.user.email || "Гостьовий доступ";
+  document.querySelector<HTMLElement>("#profile-menu-status")!.textContent = authSession ? "Ви увійшли в акаунт" : "Ви працюєте як гість";
+  document.querySelector<HTMLButtonElement>("#profile-logout")!.textContent = authSession ? "↪  Вийти з акаунта" : "↪  Завершити гостьовий сеанс";
   if (window.location.hash) requestAnimationFrame(() => document.querySelector(window.location.hash)?.scrollIntoView());
 }
 
@@ -762,7 +767,24 @@ document.querySelector<HTMLButtonElement>("#clear-history-btn")?.addEventListene
   showToast("Історію очищено.");
 });
 document.querySelector("#project-switcher")?.addEventListener("click", () => showToast(demoPage ? "Зараз відкритий демо-проєкт studio-dashboard." : "Результати аналізу зберігаються локально у цьому браузері."));
-document.querySelector<HTMLButtonElement>("#profile-button")?.addEventListener("click", async () => {
+const profileButton = document.querySelector<HTMLButtonElement>("#profile-button")!;
+const profileMenu = document.querySelector<HTMLDivElement>("#profile-menu")!;
+function setProfileMenuOpen(open: boolean): void {
+  profileMenu.hidden = !open;
+  profileButton.setAttribute("aria-expanded", String(open));
+}
+profileButton.addEventListener("click", () => setProfileMenuOpen(profileMenu.hidden));
+document.addEventListener("click", (event) => {
+  if (!profileMenu.hidden && event.target instanceof Node && !profileMenu.contains(event.target) && !profileButton.contains(event.target)) setProfileMenuOpen(false);
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && !profileMenu.hidden) {
+    setProfileMenuOpen(false);
+    profileButton.focus();
+  }
+});
+document.querySelector<HTMLButtonElement>("#profile-logout")?.addEventListener("click", async () => {
+  setProfileMenuOpen(false);
   if (demoPage) {
     showToast("Це демонстраційний профіль Dependency Graveyard.");
     return;
