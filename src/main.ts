@@ -77,7 +77,7 @@ const demoPage = requestedView === "demo";
 
 function hasGuestAccess(): boolean {
   try {
-    return sessionStorage.getItem(guestStorageKey) === "true";
+    return localStorage.getItem(guestStorageKey) === "true";
   } catch {
     return false;
   }
@@ -540,9 +540,9 @@ document.querySelector<HTMLButtonElement>("#auth-github")?.addEventListener("cli
 document.querySelector<HTMLButtonElement>("#auth-gitlab")?.addEventListener("click", () => { void beginProviderSignIn("gitlab"); });
 document.querySelector<HTMLButtonElement>("#auth-guest")?.addEventListener("click", () => {
   try {
-    sessionStorage.setItem(guestStorageKey, "true");
+    localStorage.setItem(guestStorageKey, "true");
   } catch {
-    setAuthFeedback("Браузер не зберіг гостьовий сеанс. Аналізатор відкриється зараз, але після перезавантаження знадобиться повторний вибір.");
+    setAuthFeedback("Браузер не зберіг сеанс. Аналізатор відкриється зараз, але після перезавантаження знадобиться повторний вибір.");
   }
   showAnalyzer();
 });
@@ -710,7 +710,7 @@ document.querySelector<HTMLButtonElement>("#profile-button")?.addEventListener("
       return;
     }
   }
-  try { sessionStorage.removeItem(guestStorageKey); } catch { /* The next page load will ask for access again. */ }
+  try { localStorage.removeItem(guestStorageKey); } catch { /* The next page load will ask for access again. */ }
   window.location.assign("./?view=app");
 });
 
