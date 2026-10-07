@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b0d12" />
+    <meta name="description" content="Знайдіть застарілі залежності та безпечніші альтернативи." />
+    <title>Dependency Graveyard — аудит залежностей</title>
+    <link rel="stylesheet" href="./src/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <section class="landing" id="home">
+      <div class="landing-clouds" aria-hidden="true"></div>
+      <header class="landing-nav">
+        <div class="landing-brand"><button class="landing-brand-mark" id="site-tools-toggle" type="button" aria-label="Відкрити панель функцій" title="Панель функцій" aria-expanded="false" aria-controls="site-tools-panel"><i></i><i></i></button><a class="landing-brand-name" href="#home">dependency<span>graveyard</span></a></div>
+        <nav class="landing-links" aria-label="Головна навігація"><a href="#dependencies">Можливості</a><a href="./README.md">Документація <span>↗</span></a></nav>
+        <div class="landing-actions"><span class="language-label" aria-label="Мова інтерфейсу: українська">УК</span><button class="landing-login" id="landing-open-tools" type="button">Функції сайту</button></div>
+      </header>
+      <section class="quick-panel" id="site-tools-panel" aria-label="Функції сайту" hidden>
+        <div class="quick-panel-heading"><div><span class="quick-panel-kicker">ШВИДКИЙ ДОСТУП</span><h2>Що хочете зробити?</h2></div><button class="quick-panel-close" id="quick-panel-close" type="button" aria-label="Закрити панель">×</button></div>
+        <div class="quick-panel-actions">
+          <button class="quick-action quick-action-primary" id="quick-scan" type="button"><span class="quick-action-icon">↑</span><span><b>Сканувати залежності</b><small>Завантажити маніфести проєкту</small></span><span class="quick-arrow">→</span></button>
+          <button class="quick-action" id="quick-export" type="button"><span class="quick-action-icon">↓</span><span><b>Завантажити звіт</b><small>Експортувати результати у CSV</small></span><span class="quick-arrow">→</span></button>
+          <button class="quick-action" id="quick-search" type="button"><span class="quick-action-icon">⌕</span><span><b>Знайти залежність</b><small>Пошук у результатах сканування</small></span><span class="quick-arrow">→</span></button>
+          <a class="quick-action" href="#alternatives"><span class="quick-action-icon">↗</span><span><b>Переглянути альтернативи</b><small>Рекомендовані заміни пакетів</small></span><span class="quick-arrow">→</span></a>
+          <a class="quick-action" href="#history"><span class="quick-action-icon">◷</span><span><b>Історія перевірок</b><small>Попередні результати та зміни</small></span><span class="quick-arrow">→</span></a>
+          <button class="quick-action" id="quick-demo" type="button"><span class="quick-action-icon">▦</span><span><b>Відкрити демо-звіт</b><small>Подивитися приклад результатів</small></span><span class="quick-arrow">→</span></button>
+        </div>
+        <p class="quick-panel-note">Підтримуються маніфести JavaScript, Python, Java, Go, Rust, PHP, Ruby, .NET і C/C++.</p>
+      </section>
+      <div class="landing-hero">
+        <div class="landing-eyebrow"><span></span> DEPENDENCY HEALTH CHECK <span></span></div>
+        <h1>Поверніть контроль<br />над <em>залежностями.</em></h1>
+        <p>Знайдіть застарілі пакети, оцініть ризики та побачте,<br class="desktop-break" /> чим їх можна замінити.</p>
+        <div class="landing-cta"><button id="landing-scan" class="landing-primary">Сканувати залежності <span>→</span></button><button id="landing-panel" class="landing-secondary" type="button">Панель функцій <span>↑</span></button></div>
+        <div class="landing-proof"><div class="proof-avatars"><span>JS</span><span>TS</span><span>Py</span><span>Go</span><b>+</b></div><span>Зрозумілий звіт для вашого стеку</span></div>
+      </div>
+      <div class="ecosystem-strip"><span class="ecosystem-label">СКАНУЙТЕ ЗАЛЕЖНОСТІ ПОПУЛЯРНИХ МОВ</span><div class="ecosystem-logos" aria-label="JavaScript, TypeScript, Python, Java, Go, Rust, PHP, Ruby, C sharp, C plus plus"><span class="logo-js">JS</span><span class="logo-ts">TS</span><span>Python</span><span>Java</span><span>Go</span><span class="logo-ruby">◆ Ruby</span><span>Rust</span><span>PHP</span><span>.NET</span><span>C++</span></div></div>
+      <a class="landing-scroll" href="#dependencies" aria-label="Перейти до сканування">↓</a>
+    </section>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a class="brand" href="#home" aria-label="Dependency Graveyard — на головну">
+          <span class="brand-mark"><span></span><span></span><span></span></span>
+          <span>dependency<span class="brand-muted">graveyard</span></span>
+        </a>
+        <div class="workspace-label">РОБОЧИЙ ПРОСТІР</div>
+        <button class="project-switcher" id="project-switcher"><span class="project-dot">S</span><span><b>studio-dashboard</b><small>Особистий проєкт</small></span><span class="chevron">⌄</span></button>
+        <div class="nav-label">АНАЛІЗ</div>
+        <nav class="nav">
+          <a class="nav-item active" href="#overview"><span class="nav-icon">▦</span> Огляд <span class="nav-count" id="nav-findings">0</span></a>
+          <a class="nav-item" href="#dependencies"><span class="nav-icon">◫</span> Залежності <span class="nav-count" id="nav-total">0</span></a>
+          <a class="nav-item" href="#alternatives"><span class="nav-icon">↗</span> Альтернативи</a>
+          <a class="nav-item" href="#history"><span class="nav-icon">◷</span> Історія <span class="nav-count" id="history-nav-count">0</span></a>
+        </nav>
+        <div class="sidebar-bottom">
+          <div class="plan-card"><div class="plan-top"><span class="spark">✳</span><span>Безкоштовний план</span></div><p>Перевіряйте залежності перед кожним релізом.</p><a href="#dependencies">Переглянути можливості <span>↗</span></a></div>
+          <button class="profile" id="profile-button"><span class="avatar">ОК</span><span><b>Олена Коваль</b><small>Особистий простір</small></span><span class="dots">···</span></button>
+        </div>
+      </aside>
+
+      <main class="main-content" id="overview">
+        <header class="topbar"><div class="breadcrumbs">Проєкти <span>/</span> <b>studio-dashboard</b></div><div class="top-actions"><span class="scan-time"><i></i> Ще не сканували</span><button class="icon-button" id="notify-button" aria-label="Перевірити сповіщення" title="Перевірити сповіщення">♧<i></i></button><span class="top-avatar">ОК</span></div></header>
+        <div class="page-content">
+          <section class="page-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span> ЗВІТ ПРО ЗАЛЕЖНОСТІ <span class="eyebrow-line"></span></div><h1>Здоров’я вашого <em>проєкту.</em></h1><p class="subtitle">Зрозумілий список застарілих пакетів, ризиків і рекомендованих замін.</p></div><div class="heading-actions"><button class="button button-quiet" id="export-btn"><span>↓</span> Завантажити звіт</button><button class="button button-quiet" id="registry-scan-btn" title="Надсилаються тільки назви пакетів і версії">↻ Перевірити онлайн</button><button class="button button-quiet security-scan-button" id="security-scan-btn" title="Надсилаються назви пакетів і встановлені версії до OSV">⌕ Вразливості</button><button class="button button-primary" id="scan-btn"><span>↑</span> Сканувати маніфести</button><input id="manifest-input" type="file" accept=".json,.txt,.toml,.xml,.mod,.lock,.csproj,.config,.gradle,.kts,text/plain" multiple hidden /></div><p class="scan-hint">JavaScript / TypeScript, Python, Java, Go, Rust, PHP, Ruby, C# і C/C++: завантажте відповідні файли залежностей.</p><div class="scan-feedback" id="scan-feedback" role="status" aria-live="polite" hidden></div></section>
+
+          <section class="hero-panel" id="demo-preview" hidden><div class="hero-copy"><div class="hero-kicker"><span class="pulse-dot"></span> ДЕМО-ЗВІТ <span class="hero-sep">·</span> ПРИКЛАД РЕЗУЛЬТАТІВ</div><h2>12 пакетів потребують<br /><span>вашої уваги.</span></h2><p>Чотири застаріли критично, ще вісім давно не оновлювалися. Перевірте рекомендації нижче.</p><button class="hero-link" id="review-btn">Перейти до списку <span>↓</span></button></div><div class="grave-visual" aria-hidden="true"><div class="moon"></div><div class="gravestone"><div class="stone-top"></div><div class="stone-face"><span>R.I.P.</span><i></i><b>v1.0.0</b></div></div><div class="grass grass-one"></div><div class="grass grass-two"></div><div class="firefly f1"></div><div class="firefly f2"></div><div class="firefly f3"></div><span class="sparkle s1">✳</span><span class="sparkle s2">✧</span><span class="sparkle s3">·</span><div class="hill"></div></div><div class="hero-index">ДЕМО</div></section>
+
+          <section class="metrics" aria-label="Показники аудиту">
+            <article class="metric-card"><div class="metric-label">ПЕРЕВІРЕНО <span class="metric-icon">◫</span></div><div class="metric-value" id="total-packages">0 <span class="metric-unit">пакетів</span></div><div class="metric-foot" id="scan-scope">Ще не сканували</div><div class="metric-line"><span style="width:0%"></span></div></article>
+            <article class="metric-card"><div class="metric-label">ЗНАЙДЕНО ПРОБЛЕМ <span class="metric-icon warn">⌁</span></div><div class="metric-value" id="attention-packages">0 <span class="metric-unit">пакетів</span></div><div class="metric-foot" id="attention-breakdown">Немає результатів</div><div class="metric-line amber-line"><span style="width:0%"></span></div></article>
+            <article class="metric-card"><div class="metric-label">МОЖЛИВО ЗМЕНШИТИ <span class="metric-icon green">↘</span></div><div class="metric-value" id="bundle-savings">— <span class="metric-unit">кБ у бандлі</span></div><div class="metric-foot">після рекомендованих замін</div><div class="metric-line green-line"><span style="width:0%"></span></div></article>
+            <article class="metric-card health-card"><div class="metric-label">ЗДОРОВ’Я ПРОЄКТУ <span class="metric-icon">✳</span></div><div class="health-row"><div class="health-score" id="health-score">—<span>/100</span></div><div class="health-note"><span>Очікує сканування</span><small>Завантажте маніфест</small></div></div><div class="health-bar"><span></span></div></article>
+          </section>
+
+          <section class="findings-section" id="dependencies"><div class="section-heading"><div><div class="section-kicker">РЕЗУЛЬТАТИ ПЕРЕВІРКИ <span class="count-pill" id="finding-count">0</span></div><h2>Що варто оновити</h2></div><span class="view-all">Показані проблемні пакети</span></div>
+            <div class="toolbar"><div class="search-box"><span>⌕</span><input type="search" id="search" placeholder="Пошук за назвою або заміною" aria-label="Пошук за назвою або заміною" /><kbd>⌘ K</kbd></div><div class="filters"><label class="filter-label" for="severity-filter">Показати</label><select class="filter-button" id="severity-filter" aria-label="Фільтрувати за рівнем проблеми"><option value="Усі">Усі проблеми</option><option value="Критично">Критичні</option><option value="Застаріло">Застарілі</option></select><label class="filter-label sort-label" for="sort-button">Сортування</label><select class="filter-button" id="sort-button" aria-label="Сортування результатів"><option value="risk">Спочатку важливі</option><option value="name">За назвою</option></select></div></div>
+            <div class="table-wrap"><table><thead><tr><th class="pkg-col">ЗАЛЕЖНІСТЬ</th><th>ПРОБЛЕМА</th><th>ВСТАНОВЛЕНО</th><th>АКТУАЛЬНА ВЕРСІЯ</th><th>БЕЗ ОНОВЛЕНЬ</th><th>РЕКОМЕНДОВАНА ЗАМІНА</th><th><span title="Оціночний рівень уваги, від 0 до 100">РІВЕНЬ УВАГИ ⓘ</span></th><th></th></tr></thead><tbody id="dependency-rows"></tbody></table><div id="empty-state" class="empty-state">Завантажте маніфест проєкту, щоб побачити результати перевірки.</div></div>
+            <div class="table-footer"><span id="result-count">Поки немає результатів</span><button class="show-all-button" id="show-all-btn" hidden>Показати всі</button></div>
+          </section>
+          <section class="security-results" id="security-results" aria-live="polite" hidden><div class="security-results-heading"><div><div class="section-kicker">OSV · БАЗА ВІДОМИХ ВРАЗЛИВОСТЕЙ</div><h2>Перевірка безпеки</h2></div><span class="count-pill" id="security-count">0</span></div><p class="security-summary" id="security-summary"></p><div class="security-list" id="security-list"></div></section>
+          <section class="recommendations-section" id="alternatives"><div class="section-heading"><div><div class="section-kicker">НАСТУПНІ КРОКИ</div><h2>Рекомендації щодо заміни</h2></div><span class="view-all" id="recommendation-count">0 рекомендацій</span></div><p class="recommendations-intro">Пропозиції з поясненням і кроком міграції. Команди можна скопіювати для ручного перегляду — сайт нічого не встановлює автоматично.</p><div class="recommendation-grid" id="recommendation-grid"></div><div class="recommendation-empty" id="recommendation-empty" hidden>Для знайдених пакетів немає перевіреної рекомендації. Ми не пропонуємо заміну навмання.</div></section>
+          <section class="history-section" id="history"><div class="section-heading"><div><div class="section-kicker">ЛОКАЛЬНО У ЦЬОМУ БРАУЗЕРІ</div><h2>Історія перевірок</h2></div><div class="history-actions"><span class="view-all" id="history-count">0 звітів</span><button class="history-clear" id="clear-history-btn" hidden>Очистити історію</button></div></div><p class="history-intro">Останні 10 сканувань зберігаються лише на цьому пристрої. Зберігаються назви пакетів і версії, не вміст файлів.</p><div class="history-list" id="history-list"></div><div class="history-empty" id="history-empty">Поки немає збережених сканувань. Після першого сканування тут з’явиться звіт.</div></section>
+          <footer class="page-footer"><span>Зібрано з турботою про ваш <span class="footer-heart">♥</span> код</span><span>Dependency Graveyard <span class="footer-dot">·</span> v0.1.0</span></footer>
+        </div>
+      </main>
+      <aside class="right-rail"><div class="rail-top"><span class="rail-label">ЯК ЧИТАТИ ЗВІТ</span></div><div class="scan-summary"><div class="summary-icon">✳</div><h3>Коротко про<br />результати</h3><p>Показники з’являться після сканування проєкту.</p><div class="summary-stat"><span>Перевірено пакетів</span><b id="rail-total">0</b></div><div class="summary-stat"><span>Потребують уваги</span><b class="text-amber" id="rail-findings">0</b></div><div class="summary-divider"></div><div class="severity-legend"><span><i class="legend-dot red"></i>Критично <b id="rail-critical">0</b></span><span><i class="legend-dot amber-dot"></i>Застаріло <b id="rail-stale">0</b></span><span><i class="legend-dot gray-dot"></i>Рівень уваги <b>0–100</b></span></div><p class="risk-explainer">Вищий бал означає, що залежність варто перевірити раніше.</p></div><div class="insight-card" id="demo-insight-card" hidden><div class="insight-head"><span>✧</span> ПРИКЛАД РЕКОМЕНДАЦІЇ</div><p>Заміна <b>moment</b> на <b>date-fns</b> може зменшити бандл приблизно на <strong>−67 кБ</strong>.</p><button id="insight-btn">Чому саме date-fns? <span>→</span></button><div class="insight-orbit">✳</div></div><div class="rail-activity"><div class="rail-label">ПЕРЕД ОНОВЛЕННЯМ</div><div class="activity-row"><span class="activity-icon">1</span><div><b>Перевірте сумісність</b><small>Прочитайте інструкцію до заміни.</small></div></div><div class="activity-row"><span class="activity-icon green-icon">2</span><div><b>Оновлюйте поступово</b><small>Запускайте тести після змін.</small></div></div></div><div class="rail-bottom"><a href="./README.md">Документація <span>↗</span></a></div></aside>
+    </div>
+    <div class="toast" id="toast" role="status"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
