@@ -123,7 +123,7 @@ if (demoPage) {
 
 async function beginProviderSignIn(provider: Provider): Promise<void> {
   if (!supabase) {
-    setAuthFeedback("Вхід через провайдери ще не налаштований у цьому розгортанні. Перевірте VITE_SUPABASE_URL і VITE_SUPABASE_ANON_KEY у Vercel або продовжте як гість.");
+    setAuthFeedback("Вхід через провайдери ще не налаштований у цьому розгортанні. Перевірте VITE_SUPABASE_URL і VITE_SUPABASE_PUBLISHABLE_KEY у Vercel або продовжте як гість.");
     return;
   }
   const providerNames: Record<string, string> = { google: "Google", github: "GitHub", gitlab: "GitLab" };
@@ -150,7 +150,7 @@ async function beginProviderSignIn(provider: Provider): Promise<void> {
 async function initializeAuthFlow(): Promise<void> {
   if (!appPage || demoPage || hasGuestAccess()) return;
   if (!supabase) {
-    setAuthFeedback("Для входу через Google, GitHub або GitLab потрібні VITE_SUPABASE_URL і VITE_SUPABASE_ANON_KEY у змінних середовища. Гостьовий режим доступний без них.");
+    setAuthFeedback("Для входу через Google, GitHub або GitLab потрібні VITE_SUPABASE_URL і VITE_SUPABASE_PUBLISHABLE_KEY у змінних середовища. Гостьовий режим доступний без них.");
     return;
   }
   supabase.auth.onAuthStateChange((_event, session) => {
