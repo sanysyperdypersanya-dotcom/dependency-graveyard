@@ -258,5 +258,5 @@ td{height:59px;padding-left:10px;padding-right:10px;font-size:11px}
 .quick-panel-note{border-top:1px solid #28282d;margin:14px 0 0;padding-top:11px;color:#83838a;font-size:9px;line-height:1.5}
 .landing-brand-mark[aria-expanded=true]{background:#3b171a;border-color:#fa565b}
 .landing-brand-mark:focus-visible,.quick-panel-close:focus-visible,.quick-action:focus-visible{outline:2px solid #ff6a6f;outline-offset:3px}
-.demo-page .landing{display:none}
+.app-page .landing{display:none}.app-shell[hidden]{display:none!important}.landing-primary{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
 @media(max-width:560px){.quick-panel{top:70px;width:calc(100% - 24px);padding:16px 13px 12px}.quick-panel-heading h2{font-size:18px}.quick-panel-actions{grid-template-columns:1fr;gap:6px}.quick-action{min-height:57px}.quick-action b{font-size:10px}.quick-panel-note{font-size:8px}}

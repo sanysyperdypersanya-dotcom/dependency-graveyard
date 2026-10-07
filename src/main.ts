@@ -64,7 +64,13 @@ let packageTotal = 0;
 let demoMode = false;
 let showingAll = false;
 let sortByRisk = true;
-const demoPage = new URLSearchParams(window.location.search).get("view") === "demo";
+const requestedView = new URLSearchParams(window.location.search).get("view");
+const appPage = requestedView === "app" || requestedView === "demo";
+const demoPage = requestedView === "demo";
+if (appPage) {
+  document.body.classList.add("app-page");
+  document.querySelector<HTMLElement>(".app-shell")!.hidden = false;
+}
 if (demoPage) document.body.classList.add("demo-page");
 
 function escapeHtml(value: string): string {
@@ -272,7 +278,6 @@ document.querySelector<HTMLSelectElement>("#severity-filter")?.addEventListener(
 document.querySelector<HTMLSelectElement>("#sort-button")?.addEventListener("change", renderRows);
 document.querySelector("#show-all-btn")?.addEventListener("click", () => { showingAll = !showingAll; renderRows(); });
 document.querySelector("#scan-btn")?.addEventListener("click", () => fileInput.click());
-document.querySelector("#landing-scan")?.addEventListener("click", () => fileInput.click());
 document.querySelector<HTMLButtonElement>("#registry-scan-btn")?.addEventListener("click", async (event) => {
   if (registryTargets.length === 0) {
     showToast("Спочатку завантажте маніфест залежностей.");
@@ -435,19 +440,6 @@ toolsToggle.addEventListener("click", () => setToolsPanelOpen(toolsPanel.hidden)
 document.querySelector("#quick-panel-close")?.addEventListener("click", () => {
   setToolsPanelOpen(false);
   toolsToggle.focus();
-});
-document.querySelector("#quick-scan")?.addEventListener("click", () => {
-  setToolsPanelOpen(false);
-  fileInput.click();
-});
-document.querySelector("#quick-export")?.addEventListener("click", () => {
-  setToolsPanelOpen(false);
-  document.querySelector<HTMLButtonElement>("#export-btn")?.click();
-});
-document.querySelector("#quick-search")?.addEventListener("click", () => {
-  setToolsPanelOpen(false);
-  document.querySelector("#dependencies")?.scrollIntoView({ behavior: "smooth" });
-  window.setTimeout(() => searchInput.focus(), 250);
 });
 document.querySelector("#landing-open-tools")?.addEventListener("click", () => setToolsPanelOpen(true));
 document.querySelector("#landing-panel")?.addEventListener("click", () => setToolsPanelOpen(true));
@@ -613,3 +605,6 @@ document.addEventListener("keydown", (event) => {
 renderRows();
 renderHistory();
 if (demoPage) openDemoReport();
+else if (appPage && window.location.hash) {
+  requestAnimationFrame(() => document.querySelector(window.location.hash)?.scrollIntoView());
+}

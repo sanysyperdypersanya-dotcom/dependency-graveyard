@@ -16,17 +16,17 @@
       <div class="landing-clouds" aria-hidden="true"></div>
       <header class="landing-nav">
         <div class="landing-brand"><button class="landing-brand-mark" id="site-tools-toggle" type="button" aria-label="Відкрити панель функцій" title="Панель функцій" aria-expanded="false" aria-controls="site-tools-panel"><i></i><i></i></button><a class="landing-brand-name" href="#home">dependency<span>graveyard</span></a></div>
-        <nav class="landing-links" aria-label="Головна навігація"><a href="#dependencies">Можливості</a><a href="./README.md">Документація <span>↗</span></a></nav>
+        <nav class="landing-links" aria-label="Головна навігація"><a href="./?view=app#dependencies">Можливості</a><a href="./README.md">Документація <span>↗</span></a></nav>
         <div class="landing-actions"><span class="language-label" aria-label="Мова інтерфейсу: українська">УК</span><button class="landing-login" id="landing-open-tools" type="button">Функції сайту</button></div>
       </header>
       <section class="quick-panel" id="site-tools-panel" aria-label="Функції сайту" hidden>
         <div class="quick-panel-heading"><div><span class="quick-panel-kicker">ШВИДКИЙ ДОСТУП</span><h2>Що хочете зробити?</h2></div><button class="quick-panel-close" id="quick-panel-close" type="button" aria-label="Закрити панель">×</button></div>
         <div class="quick-panel-actions">
-          <button class="quick-action quick-action-primary" id="quick-scan" type="button"><span class="quick-action-icon">↑</span><span><b>Сканувати залежності</b><small>Завантажити маніфести проєкту</small></span><span class="quick-arrow">→</span></button>
-          <button class="quick-action" id="quick-export" type="button"><span class="quick-action-icon">↓</span><span><b>Завантажити звіт</b><small>Експортувати результати у CSV</small></span><span class="quick-arrow">→</span></button>
-          <button class="quick-action" id="quick-search" type="button"><span class="quick-action-icon">⌕</span><span><b>Знайти залежність</b><small>Пошук у результатах сканування</small></span><span class="quick-arrow">→</span></button>
-          <a class="quick-action" href="#alternatives"><span class="quick-action-icon">↗</span><span><b>Переглянути альтернативи</b><small>Рекомендовані заміни пакетів</small></span><span class="quick-arrow">→</span></a>
-          <a class="quick-action" href="#history"><span class="quick-action-icon">◷</span><span><b>Історія перевірок</b><small>Попередні результати та зміни</small></span><span class="quick-arrow">→</span></a>
+          <a class="quick-action quick-action-primary" id="quick-scan" href="./?view=app#scan-btn"><span class="quick-action-icon">↑</span><span><b>Відкрити панель аналізу</b><small>Сканування, звіти й рекомендації</small></span><span class="quick-arrow">→</span></a>
+          <a class="quick-action" id="quick-export" href="./?view=app#export-btn"><span class="quick-action-icon">↓</span><span><b>Завантажити звіт</b><small>Експортувати результати у CSV</small></span><span class="quick-arrow">→</span></a>
+          <a class="quick-action" id="quick-search" href="./?view=app#search"><span class="quick-action-icon">⌕</span><span><b>Знайти залежність</b><small>Пошук у результатах сканування</small></span><span class="quick-arrow">→</span></a>
+          <a class="quick-action" href="./?view=app#alternatives"><span class="quick-action-icon">↗</span><span><b>Переглянути альтернативи</b><small>Рекомендовані заміни пакетів</small></span><span class="quick-arrow">→</span></a>
+          <a class="quick-action" href="./?view=app#history"><span class="quick-action-icon">◷</span><span><b>Історія перевірок</b><small>Попередні результати та зміни</small></span><span class="quick-arrow">→</span></a>
           <a class="quick-action" id="quick-demo" href="./?view=demo" target="_blank" rel="noopener"><span class="quick-action-icon">▦</span><span><b>Відкрити демо-звіт</b><small>Відкриється в окремій вкладці</small></span><span class="quick-arrow">↗</span></a>
         </div>
         <p class="quick-panel-note">Підтримуються маніфести JavaScript, Python, Java, Go, Rust, PHP, Ruby, .NET і C/C++.</p>
@@ -35,15 +35,15 @@
         <div class="landing-eyebrow"><span></span> DEPENDENCY HEALTH CHECK <span></span></div>
         <h1>Поверніть контроль<br />над <em>залежностями.</em></h1>
         <p>Знайдіть застарілі пакети, оцініть ризики та побачте,<br class="desktop-break" /> чим їх можна замінити.</p>
-        <div class="landing-cta"><button id="landing-scan" class="landing-primary">Сканувати залежності <span>→</span></button><button id="landing-panel" class="landing-secondary" type="button">Панель функцій <span>↑</span></button></div>
+        <div class="landing-cta"><a id="landing-scan" class="landing-primary" href="./?view=app#scan-btn">Сканувати залежності <span>→</span></a><button id="landing-panel" class="landing-secondary" type="button">Панель функцій <span>↑</span></button></div>
         <div class="landing-proof"><div class="proof-avatars"><span>JS</span><span>TS</span><span>Py</span><span>Go</span><b>+</b></div><span>Зрозумілий звіт для вашого стеку</span></div>
       </div>
       <div class="ecosystem-strip"><span class="ecosystem-label">СКАНУЙТЕ ЗАЛЕЖНОСТІ ПОПУЛЯРНИХ МОВ</span><div class="ecosystem-logos" aria-label="JavaScript, TypeScript, Python, Java, Go, Rust, PHP, Ruby, C sharp, C plus plus"><span class="logo-js">JS</span><span class="logo-ts">TS</span><span>Python</span><span>Java</span><span>Go</span><span class="logo-ruby">◆ Ruby</span><span>Rust</span><span>PHP</span><span>.NET</span><span>C++</span></div></div>
-      <a class="landing-scroll" href="#dependencies" aria-label="Перейти до сканування">↓</a>
+      <a class="landing-scroll" href="./?view=app#dependencies" aria-label="Перейти до сканування">↓</a>
     </section>
-    <div class="app-shell">
+    <div class="app-shell" hidden>
       <aside class="sidebar">
-        <a class="brand" href="#home" aria-label="Dependency Graveyard — на головну">
+        <a class="brand" href="./" aria-label="Dependency Graveyard — на головну">
           <span class="brand-mark"><span></span><span></span><span></span></span>
           <span>dependency<span class="brand-muted">graveyard</span></span>
         </a>
