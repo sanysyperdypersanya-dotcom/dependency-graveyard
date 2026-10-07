@@ -41,6 +41,24 @@
       <div class="ecosystem-strip"><span class="ecosystem-label">СКАНУЙТЕ ЗАЛЕЖНОСТІ ПОПУЛЯРНИХ МОВ</span><div class="ecosystem-logos" aria-label="JavaScript, TypeScript, Python, Java, Go, Rust, PHP, Ruby, C sharp, C plus plus"><span class="logo-js">JS</span><span class="logo-ts">TS</span><span>Python</span><span>Java</span><span>Go</span><span class="logo-ruby">◆ Ruby</span><span>Rust</span><span>PHP</span><span>.NET</span><span>C++</span></div></div>
       <a class="landing-scroll" href="./?view=app#dependencies" aria-label="Перейти до сканування">↓</a>
     </section>
+    <section class="auth-gate" id="auth-gate" hidden aria-labelledby="auth-title">
+      <div class="auth-card">
+        <a class="auth-brand" href="./" aria-label="Dependency Graveyard — на головну"><span class="auth-brand-mark"><i></i><i></i><i></i></span><span>dependency<span>graveyard</span></span></a>
+        <div class="auth-kicker">DEPENDENCY GRAVEYARD · ANALYZER</div>
+        <h1 id="auth-title">Увійдіть або створіть акаунт</h1>
+        <p class="auth-description">Відкрийте аналізатор через свій акаунт або продовжте як гість.</p>
+        <div class="auth-providers" aria-label="Вхід через провайдера">
+          <button class="auth-provider" id="auth-google" type="button"><span class="provider-mark google-mark" aria-hidden="true">G</span><span>Продовжити з Google</span><span class="provider-arrow">→</span></button>
+          <button class="auth-provider" id="auth-github" type="button"><span class="provider-mark github-mark" aria-hidden="true">●</span><span>Продовжити з GitHub</span><span class="provider-arrow">→</span></button>
+          <button class="auth-provider" id="auth-gitlab" type="button"><span class="provider-mark gitlab-mark" aria-hidden="true">◆</span><span>Продовжити з GitLab</span><span class="provider-arrow">→</span></button>
+        </div>
+        <div class="auth-divider"><span>або</span></div>
+        <button class="auth-guest" id="auth-guest" type="button">Продовжити як гість <span>→</span></button>
+        <p class="auth-footnote">У гостьовому режимі файли читаються лише у браузері, а історія зберігається на цьому пристрої.</p>
+        <p class="auth-feedback" id="auth-feedback" role="status" aria-live="polite" hidden></p>
+        <a class="auth-home-link" href="./">← На головну</a>
+      </div>
+    </section>
     <div class="app-shell" hidden>
       <aside class="sidebar">
         <a class="brand" href="./" aria-label="Dependency Graveyard — на головну">

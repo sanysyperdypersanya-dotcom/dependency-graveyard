@@ -3,6 +3,8 @@ import { compareVersions, formatAge, lookupRegistry, type RegistrySnapshot } fro
 import { queryOsv } from './security';
 import { getRecommendation } from './recommendations';
 import { createAuditRecord, loadAuditHistory, removeAuditHistory, saveAuditHistory, type AuditRecord } from './audit-history';
+import { supabase } from './auth';
+import type { Provider, Session } from '@supabase/supabase-js';
 
 type Severity = "Критично" | "Застаріло";
 type Dependency = {
@@ -55,6 +57,10 @@ const attentionPackages = document.querySelector<HTMLDivElement>("#attention-pac
 const attentionBreakdown = document.querySelector<HTMLDivElement>("#attention-breakdown")!;
 const scanScope = document.querySelector<HTMLDivElement>("#scan-scope")!;
 const scanFeedback = document.querySelector<HTMLDivElement>("#scan-feedback")!;
+const authGate = document.querySelector<HTMLElement>("#auth-gate")!;
+const appShell = document.querySelector<HTMLElement>(".app-shell")!;
+const authFeedback = document.querySelector<HTMLParagraphElement>("#auth-feedback")!;
+const guestStorageKey = "dependency-graveyard:guest-access";
 let activeDependencies: Dependency[] = [];
 let registryTargets: ScannedDependency[] = [];
 const registrySnapshots = new Map<string, RegistrySnapshot>();
@@ -64,14 +70,102 @@ let packageTotal = 0;
 let demoMode = false;
 let showingAll = false;
 let sortByRisk = true;
+let authSession: Session | null = null;
 const requestedView = new URLSearchParams(window.location.search).get("view");
 const appPage = requestedView === "app" || requestedView === "demo";
 const demoPage = requestedView === "demo";
-if (appPage) {
-  document.body.classList.add("app-page");
-  document.querySelector<HTMLElement>(".app-shell")!.hidden = false;
+
+function hasGuestAccess(): boolean {
+  try {
+    return sessionStorage.getItem(guestStorageKey) === "true";
+  } catch {
+    return false;
+  }
 }
-if (demoPage) document.body.classList.add("demo-page");
+
+function setAuthFeedback(message: string): void {
+  authFeedback.textContent = message;
+  authFeedback.hidden = !message;
+}
+
+function showAuthGate(): void {
+  document.body.classList.add("app-page", "auth-page");
+  authGate.hidden = false;
+  appShell.hidden = true;
+}
+
+function showAnalyzer(): void {
+  document.body.classList.add("app-page");
+  document.body.classList.remove("auth-page");
+  authGate.hidden = true;
+  appShell.hidden = false;
+  const metadataName = authSession?.user.user_metadata?.full_name;
+  const userName = (typeof metadataName === "string" && metadataName.trim()) || authSession?.user.email || "Гість";
+  const avatar = userName.split(/[\s@._-]+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join("").toLocaleUpperCase("uk-UA") || "Г";
+  document.querySelector<HTMLElement>(".project-switcher b")!.textContent = "Мій проєкт";
+  document.querySelector<HTMLElement>(".breadcrumbs b")!.textContent = "Мій проєкт";
+  document.querySelector<HTMLElement>(".profile .avatar")!.textContent = avatar;
+  document.querySelector<HTMLElement>(".profile b")!.textContent = userName;
+  document.querySelector<HTMLElement>(".profile small")!.textContent = authSession ? (authSession.user.email ?? "Обліковий запис") : "Гість · натисніть, щоб вийти";
+  document.querySelector<HTMLButtonElement>("#profile-button")!.setAttribute("aria-label", authSession ? "Вийти з облікового запису" : "Завершити гостьовий сеанс");
+  if (window.location.hash) requestAnimationFrame(() => document.querySelector(window.location.hash)?.scrollIntoView());
+}
+
+if (appPage || requestedView === "auth") document.body.classList.add("app-page");
+if (demoPage) {
+  document.body.classList.add("demo-page");
+  appShell.hidden = false;
+} else if (appPage && hasGuestAccess()) {
+  showAnalyzer();
+} else if (appPage || requestedView === "auth") {
+  showAuthGate();
+}
+
+async function beginProviderSignIn(provider: Provider): Promise<void> {
+  if (!supabase) {
+    setAuthFeedback("Вхід через провайдери ще не налаштований у цьому розгортанні. Перевірте VITE_SUPABASE_URL і VITE_SUPABASE_ANON_KEY у Vercel або продовжте як гість.");
+    return;
+  }
+  const providerNames: Record<string, string> = { google: "Google", github: "GitHub", gitlab: "GitLab" };
+  const buttons = ["#auth-google", "#auth-github", "#auth-gitlab"].map((selector) => document.querySelector<HTMLButtonElement>(selector)!);
+  buttons.forEach((button) => { button.disabled = true; });
+  setAuthFeedback("Переходимо до " + (providerNames[provider] ?? provider) + " для входу…");
+  const redirect = new URL(window.location.href);
+  redirect.search = "?view=app";
+  redirect.hash = "";
+  try {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: { redirectTo: redirect.toString() },
+    });
+    if (!error) return;
+    setAuthFeedback("Не вдалося розпочати вхід. Перевірте, чи провайдер увімкнений у Supabase, і спробуйте ще раз.");
+  } catch {
+    setAuthFeedback("Не вдалося з’єднатися з Supabase. Перевірте мережу й налаштування авторизації.");
+  } finally {
+    buttons.forEach((button) => { button.disabled = false; });
+  }
+}
+
+async function initializeAuthFlow(): Promise<void> {
+  if (!appPage || demoPage || hasGuestAccess()) return;
+  if (!supabase) {
+    setAuthFeedback("Для входу через Google, GitHub або GitLab потрібні VITE_SUPABASE_URL і VITE_SUPABASE_ANON_KEY у змінних середовища. Гостьовий режим доступний без них.");
+    return;
+  }
+  supabase.auth.onAuthStateChange((_event, session) => {
+    authSession = session;
+    if (session) showAnalyzer();
+    else if (appPage && !hasGuestAccess()) showAuthGate();
+  });
+  const { data, error } = await supabase.auth.getSession();
+  if (error) {
+    setAuthFeedback("Не вдалося перевірити сеанс Supabase. Спробуйте знову або продовжте як гість.");
+    return;
+  }
+  authSession = data.session;
+  if (authSession) showAnalyzer();
+}
 
 function escapeHtml(value: string): string {
   return value.replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]!);
@@ -441,6 +535,17 @@ document.querySelector("#quick-panel-close")?.addEventListener("click", () => {
   setToolsPanelOpen(false);
   toolsToggle.focus();
 });
+document.querySelector<HTMLButtonElement>("#auth-google")?.addEventListener("click", () => { void beginProviderSignIn("google"); });
+document.querySelector<HTMLButtonElement>("#auth-github")?.addEventListener("click", () => { void beginProviderSignIn("github"); });
+document.querySelector<HTMLButtonElement>("#auth-gitlab")?.addEventListener("click", () => { void beginProviderSignIn("gitlab"); });
+document.querySelector<HTMLButtonElement>("#auth-guest")?.addEventListener("click", () => {
+  try {
+    sessionStorage.setItem(guestStorageKey, "true");
+  } catch {
+    setAuthFeedback("Браузер не зберіг гостьовий сеанс. Аналізатор відкриється зараз, але після перезавантаження знадобиться повторний вибір.");
+  }
+  showAnalyzer();
+});
 document.querySelector("#landing-open-tools")?.addEventListener("click", () => setToolsPanelOpen(true));
 document.querySelector("#landing-panel")?.addEventListener("click", () => setToolsPanelOpen(true));
 toolsPanel.querySelectorAll<HTMLAnchorElement>("a").forEach((link) => link.addEventListener("click", () => setToolsPanelOpen(false)));
@@ -592,8 +697,22 @@ document.querySelector<HTMLButtonElement>("#clear-history-btn")?.addEventListene
   renderHistory();
   showToast("Історію очищено.");
 });
-document.querySelector("#project-switcher")?.addEventListener("click", () => showToast("Зараз відкритий демо-проєкт studio-dashboard."));
-document.querySelector("#profile-button")?.addEventListener("click", () => showToast("Це демонстраційний профіль Dependency Graveyard."));
+document.querySelector("#project-switcher")?.addEventListener("click", () => showToast(demoPage ? "Зараз відкритий демо-проєкт studio-dashboard." : "Результати аналізу зберігаються локально у цьому браузері."));
+document.querySelector<HTMLButtonElement>("#profile-button")?.addEventListener("click", async () => {
+  if (demoPage) {
+    showToast("Це демонстраційний профіль Dependency Graveyard.");
+    return;
+  }
+  if (authSession && supabase) {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      showToast("Не вдалося завершити сеанс Supabase. Спробуйте ще раз.");
+      return;
+    }
+  }
+  try { sessionStorage.removeItem(guestStorageKey); } catch { /* The next page load will ask for access again. */ }
+  window.location.assign("./?view=app");
+});
 
 document.addEventListener("keydown", (event) => {
   if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
@@ -605,6 +724,4 @@ document.addEventListener("keydown", (event) => {
 renderRows();
 renderHistory();
 if (demoPage) openDemoReport();
-else if (appPage && window.location.hash) {
-  requestAnimationFrame(() => document.querySelector(window.location.hash)?.scrollIntoView());
-}
+else if (appPage) void initializeAuthFlow();
