@@ -64,6 +64,8 @@ let packageTotal = 0;
 let demoMode = false;
 let showingAll = false;
 let sortByRisk = true;
+const demoPage = new URLSearchParams(window.location.search).get("view") === "demo";
+if (demoPage) document.body.classList.add("demo-page");
 
 function escapeHtml(value: string): string {
   return value.replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]!);
@@ -447,10 +449,6 @@ document.querySelector("#quick-search")?.addEventListener("click", () => {
   document.querySelector("#dependencies")?.scrollIntoView({ behavior: "smooth" });
   window.setTimeout(() => searchInput.focus(), 250);
 });
-document.querySelector("#quick-demo")?.addEventListener("click", () => {
-  setToolsPanelOpen(false);
-  openDemoReport();
-});
 document.querySelector("#landing-open-tools")?.addEventListener("click", () => setToolsPanelOpen(true));
 document.querySelector("#landing-panel")?.addEventListener("click", () => setToolsPanelOpen(true));
 toolsPanel.querySelectorAll<HTMLAnchorElement>("a").forEach((link) => link.addEventListener("click", () => setToolsPanelOpen(false)));
@@ -614,3 +612,4 @@ document.addEventListener("keydown", (event) => {
 
 renderRows();
 renderHistory();
+if (demoPage) openDemoReport();
