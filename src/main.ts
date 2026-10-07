@@ -51,12 +51,14 @@ const emptyState = document.querySelector<HTMLDivElement>("#empty-state")!;
 const resultCount = document.querySelector<HTMLSpanElement>("#result-count")!;
 const toast = document.querySelector<HTMLDivElement>("#toast")!;
 const fileInput = document.querySelector<HTMLInputElement>("#manifest-input")!;
+const folderInput = document.querySelector<HTMLInputElement>("#folder-input")!;
 const findingCount = document.querySelector<HTMLSpanElement>("#finding-count")!;
 const totalPackages = document.querySelector<HTMLDivElement>("#total-packages")!;
 const attentionPackages = document.querySelector<HTMLDivElement>("#attention-packages")!;
 const attentionBreakdown = document.querySelector<HTMLDivElement>("#attention-breakdown")!;
 const scanScope = document.querySelector<HTMLDivElement>("#scan-scope")!;
 const scanFeedback = document.querySelector<HTMLDivElement>("#scan-feedback")!;
+const manifestFileResults = document.querySelector<HTMLElement>("#manifest-file-results")!;
 const authGate = document.querySelector<HTMLElement>("#auth-gate")!;
 const appShell = document.querySelector<HTMLElement>(".app-shell")!;
 const authFeedback = document.querySelector<HTMLParagraphElement>("#auth-feedback")!;
@@ -522,6 +524,7 @@ function openDemoReport(): void {
   document.querySelector(".scan-time")!.innerHTML = "<i></i> Демонстраційні дані";
   scanScope.textContent = "У демо-проєкті";
   scanFeedback.hidden = true;
+  renderManifestFileResults([]);
   renderRows();
   document.querySelector("#overview")?.scrollIntoView({ behavior: "smooth" });
 }
@@ -529,6 +532,46 @@ function setToolsPanelOpen(open: boolean): void {
   toolsPanel.hidden = !open;
   toolsToggle.setAttribute("aria-expanded", String(open));
   if (open) document.querySelector<HTMLButtonElement>("#quick-panel-close")?.focus();
+}
+function renderManifestFileResults(results: Array<{ fileName: string; status: "read" | "empty" | "unsupported" | "error"; format?: string; ecosystem?: string; message?: string; dependencies: ScannedDependency[] }>): void {
+  manifestFileResults.replaceChildren();
+  manifestFileResults.hidden = results.length === 0;
+  if (!results.length) return;
+  const heading = document.createElement("h3");
+  heading.textContent = `Результати по файлах · ${results.length}`;
+  manifestFileResults.append(heading);
+  for (const result of results) {
+    const card = document.createElement("article");
+    card.className = `manifest-file-card is-${result.status}`;
+    const header = document.createElement("div");
+    header.className = "manifest-file-heading";
+    const path = document.createElement("strong");
+    path.textContent = result.fileName;
+    const status = document.createElement("span");
+    status.textContent = result.status === "read" ? `${result.dependencies.length} залежностей` : result.status === "empty" ? "Залежностей не знайдено" : result.status === "error" ? "Помилка читання" : "Непідтримуваний формат";
+    header.append(path, status);
+    card.append(header);
+    if (result.status === "error" || result.status === "unsupported") {
+      const error = document.createElement("p");
+      error.className = "manifest-file-error";
+      error.textContent = result.message || "Не вдалося прочитати маніфест.";
+      card.append(error);
+    } else if (result.dependencies.length) {
+      const list = document.createElement("ul");
+      for (const dependency of result.dependencies) {
+        const item = document.createElement("li");
+        item.textContent = `${dependency.name} · ${dependency.version === "—" ? "версія не вказана" : `v${dependency.version}`} · ${dependency.ecosystem}`;
+        list.append(item);
+      }
+      card.append(list);
+    }
+    if (result.format) {
+      const format = document.createElement("small");
+      format.textContent = `${result.ecosystem || ""}${result.ecosystem ? " · " : ""}${result.format}`;
+      card.append(format);
+    }
+    manifestFileResults.append(card);
+  }
 }
 toolsToggle.addEventListener("click", () => setToolsPanelOpen(toolsPanel.hidden));
 document.querySelector("#quick-panel-close")?.addEventListener("click", () => {
@@ -571,13 +614,14 @@ fileInput.addEventListener("change", async () => {
   };
 
   const fileResults: FileResult[] = await Promise.all(files.map(async (file): Promise<FileResult> => {
+    const fileName = (file as File & { webkitRelativePath?: string }).webkitRelativePath || file.name;
     const info = detectManifest(file.name);
-    if (!info) return { fileName: file.name, info: null, status: "unsupported", dependencies: [], message: "формат не підтримується" };
+    if (!info) return { fileName, info: null, status: "unsupported", dependencies: [], message: "Формат файлу не підтримується." };
     try {
       const parsed = parseManifest(file.name, await file.text());
-      return { fileName: file.name, info, status: parsed.length ? "read" : "empty", dependencies: parsed };
+      return { fileName, info, status: parsed.length ? "read" : "empty", dependencies: parsed };
     } catch (error) {
-      return { fileName: file.name, info, status: "error", dependencies: [], message: error instanceof Error ? error.message : "не вдалося прочитати файл" };
+      return { fileName, info, status: "error", dependencies: [], message: error instanceof Error ? error.message : "Не вдалося прочитати файл." };
     }
   }));
 
@@ -653,6 +697,7 @@ fileInput.addEventListener("change", async () => {
     ...(hasUnsupportedFiles ? ["Підтримувані формати: " + supportedManifests + "."] : []),
   ].join("\n");
   scanFeedback.hidden = false;
+  renderManifestFileResults(fileResults);
   emptyState.textContent = "Збігів у локальному каталозі немає. Невідомі пакети не перевіряються на актуальність.";
   renderRows();
   document.querySelector("#overview")?.scrollIntoView({ behavior: "smooth" });
@@ -661,7 +706,26 @@ fileInput.addEventListener("change", async () => {
   showToast("Перевірено " + recognizedFiles + " із " + files.length + " файлів та " + scanned.length + " залежностей; збігів у каталозі: " + activeDependencies.length + (issueFiles ? "; файлів з помилками або невідомим форматом: " + issueFiles : "") + ".");
   if (!historyWrite.saved) showToast("Сканування готове, але браузер не зміг зберегти історію. Перевірте доступне місце для локальних даних.");
   fileInput.value = "";
-});document.querySelector("#review-btn")?.addEventListener("click", () => document.querySelector("#dependencies")?.scrollIntoView({ behavior: "smooth" }));
+});
+document.querySelector<HTMLButtonElement>("#choose-folder")?.addEventListener("click", () => folderInput.click());
+folderInput.addEventListener("change", () => {
+  const ignoredDirectories = new Set([".git", "node_modules", "dist", "build", "coverage", "vendor", ".venv", "venv", "target", "bin", "obj", ".next"]);
+  const manifests = [...(folderInput.files ?? [])].filter((file) => {
+    const relativePath = (file as File & { webkitRelativePath?: string }).webkitRelativePath || file.name;
+    const segments = relativePath.split(/[\\/]/);
+    return detectManifest(file.name) !== null && !segments.slice(0, -1).some((segment) => ignoredDirectories.has(segment.toLowerCase()));
+  });
+  folderInput.value = "";
+  if (!manifests.length) {
+    showToast("У папці не знайдено підтримуваних маніфестів залежностей.");
+    return;
+  }
+  const transfer = new DataTransfer();
+  manifests.forEach((file) => transfer.items.add(file));
+  fileInput.files = transfer.files;
+  fileInput.dispatchEvent(new Event("change", { bubbles: true }));
+});
+document.querySelector("#review-btn")?.addEventListener("click", () => document.querySelector("#dependencies")?.scrollIntoView({ behavior: "smooth" }));
 document.querySelector("#insight-btn")?.addEventListener("click", () => {
   if (!activeDependencies.some((item) => item.name === "moment")) {
     showToast("Ця порада є частиною демо-звіту. Завантажте свій маніфест, щоб побачити збіги.");
